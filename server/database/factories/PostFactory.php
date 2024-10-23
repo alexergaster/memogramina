@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,6 +23,7 @@ class PostFactory extends Factory
             'image_path' => fake()->imageUrl(),
             "caption" => fake()->text(),
             "likes" => fake()->numerify(),
+            'user_id' => User::inRandomOrder()->first()->id
         ];
     }
 }
