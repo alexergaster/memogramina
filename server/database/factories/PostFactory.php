@@ -20,7 +20,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'image_path' => fake()->imageUrl(),
+            'image' => fake()->imageUrl(),
             "caption" => fake()->text(),
             "likes" => fake()->numerify(),
             'user_id' => User::inRandomOrder()->first()->id
