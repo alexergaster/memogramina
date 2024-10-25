@@ -42,7 +42,7 @@ class RegisterRequset extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
-            response()->json(["success" => false, "errors" => $validator->errors()], 400)
+            response()->json(["success" => false, "errors" => $validator->errors()], 422)
         );
     }
 }
