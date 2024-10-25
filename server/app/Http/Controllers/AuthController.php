@@ -8,6 +8,7 @@ use App\Services\User\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 
 class AuthController extends Controller
@@ -43,23 +44,23 @@ class AuthController extends Controller
 
         return response()->json(compact('token'));
     }
-    // TODO: create methods: me(), logout() and refresh()
-    // public function me(): JsonResponse
-    // {
-    //     return response()->json(auth()->user());
-    // }
 
-    // // Логаут користувача
-    // public function logout()
-    // {
-    //     auth()->logout();
+    public function me(): JsonResponse
+    {
+        $user = Auth::user();
+        return response()->json($user);
+    }
 
-    //     return response()->json(['message' => 'Successfully logged out']);
-    // }
+    public function logout(): JsonResponse
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
 
-    // // Оновлення токена
-    // public function refresh()
-    // {
-    //     return response()->json(['token' => auth()->refresh()]);
-    // }
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    public function refresh(): JsonResponse
+    {
+        $token = JWTAuth::refresh(JWTAuth::getToken());
+        return response()->json(['token' =>  $token]);
+    }
 }
