@@ -24,7 +24,7 @@ class RegisterRequset extends FormRequest
     public function rules(): array
     {
         return [
-            "image" => 'required|string|max:100',
+            "image" => 'string|max:100',
             "username" => "required|string|max:100",
             'name' => 'required|string|max:100',
             'email' => 'required|string|email|max:100|unique:users',
