@@ -29,7 +29,7 @@
     </button>
 
     <div
-      v-if="!isUserLoggedIn"
+      v-if="!user.isLoggedIn"
       class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 backdrop-blur-sm rounded-lg"
     >
       <p class="text-black text-lg font-semibold text-center cursor-default">
@@ -43,8 +43,8 @@
 
 <script setup>
 defineProps({
-  isUserLoggedIn: {
-    type: Boolean,
+  user: {
+    type: Object,
     required: true,
   },
 })

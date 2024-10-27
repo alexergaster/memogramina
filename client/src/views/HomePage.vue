@@ -30,10 +30,10 @@
       <!-- Бічна панель -->
       <div class="w-1/3 ml-3">
         <!-- Особистий кабінет -->
-        <personal-office-item :isUserLoggedIn="isUserLoggedIn" />
+        <personal-office-item :user="user" />
 
         <!-- Месенджер -->
-        <messenger-item :isUserLoggedIn="isUserLoggedIn" />
+        <messenger-item :user="user" />
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@ import PersonalOfficeItem from '../components/PersonalOfficeItem.vue'
 import MessengerItem from '../components/MessengerItem.vue'
 
 const posts = ref([])
-const isUserLoggedIn = ref(false)
+const user = ref({})
 
 onMounted(() => {
   getPosts()
@@ -62,13 +62,19 @@ onMounted(() => {
   getUser(localStorage.getItem('token')).then(response => {
     if (response.status === 401) {
       refreshToken(localStorage.getItem('token')).then(r => {
-        console.log(r)
-
         if (r.error) {
-          isUserLoggedIn.value = false
-          return
+          user.value.isLoggedIn = false
+        } else {
+          localStorage.setItem('token', r.token)
+          getUser(r.token).then(newResponse => {
+            user.value = newResponse.user
+            user.value.isLoggedIn = true
+          })
         }
       })
+    } else {
+      user.value = response.user
+      user.value.isLoggedIn = true
     }
   })
 })

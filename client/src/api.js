@@ -25,42 +25,33 @@ export const loginUser = async data => {
   }).then(r => r.json())
 }
 
+const handleFetch = async (url, options) => {
+  try {
+    const response = await fetch(url, options)
+    if (!response.ok) {
+      return { error: true, status: response.status }
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Помилка запиту:', error)
+    return { error: true, status: 500 }
+  }
+}
+
 export const getUser = async token => {
-  return await fetch(`${API_URL}/auth/me`, {
+  return await handleFetch(`${API_URL}/auth/me`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-    .then(response => {
-      if (!response.ok) {
-        return { error: true, status: response.status }
-      }
-
-      return response.json()
-    })
-    .catch(error => {
-      console.error('Помилка запиту:', error)
-      return { error: true, status: 500 }
-    })
 }
 
 export const refreshToken = async oldToken => {
-  return await fetch(`${API_URL}/auth/refresh`, {
+  return await handleFetch(`${API_URL}/auth/refresh`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${oldToken}`,
     },
   })
-    .then(response => {
-      if (!response.ok) {
-        return { error: true, status: response.status }
-      }
-
-      return response.json()
-    })
-    .catch(error => {
-      console.error('Помилка запиту:', error)
-      return { error: true, status: 500 }
-    })
 }

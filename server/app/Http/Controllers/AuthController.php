@@ -49,7 +49,7 @@ class AuthController extends Controller
     public function me(): JsonResponse
     {
         $user = Auth::user();
-        return response()->json($user);
+        return response()->json(['success' => true, 'user' => $user]);
     }
 
     public function logout(): JsonResponse
