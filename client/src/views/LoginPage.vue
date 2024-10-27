@@ -8,7 +8,7 @@
         <h2 class="text-center text-2xl font-bold text-gray-700">
           Авторизація
         </h2>
-        <form action="#" method="POST" class="mt-4 space-y-4">
+        <form @submit.prevent="submitForm" method="POST" class="mt-4 space-y-4">
           <!-- Електронна пошта -->
           <div>
             <label
@@ -17,12 +17,15 @@
               >Електронна пошта</label
             >
             <input
+              v-model="email"
               type="email"
-              id="login-email"
               name="email"
               required
               class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <p v-if="errors.email" class="text-red-500 text-sm">
+              {{ errors.email }}
+            </p>
           </div>
 
           <!-- Пароль -->
@@ -33,12 +36,15 @@
               >Пароль</label
             >
             <input
+              v-model="password"
               type="password"
-              id="login-password"
               name="password"
               required
               class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <p v-if="errors.password" class="text-red-500 text-sm">
+              {{ errors.password }}
+            </p>
           </div>
 
           <!-- Кнопка входу -->
@@ -61,3 +67,60 @@
     </div>
   </div>
 </template>
+
+<script>
+import { ref } from 'vue'
+import { loginUser } from '../api'
+import { useRouter } from 'vue-router'
+
+export default {
+  name: 'LoginPage',
+  setup() {
+    const router = useRouter()
+    const email = ref('')
+    const password = ref('')
+    const errors = ref({})
+
+    const validateForm = () => {
+      errors.value = {}
+
+      if (!password.value) {
+        errors.value.password = "Пароль обов'язковий"
+      } else if (password.value.length < 6) {
+        errors.value.password = 'Пароль повинен бути не менше 6 символів'
+      }
+    }
+
+    const submitForm = () => {
+      validateForm()
+      if (Object.keys(errors.value).length === 0) {
+        const userData = {
+          email: email.value,
+          password: password.value,
+        }
+
+        loginUser(userData).then(response => {
+          console.log(response)
+
+          if (!response.success) {
+            Object.entries(response.errors).forEach(([key, value]) => {
+              errors.value[key] = value[0]
+            })
+            return
+          }
+
+          localStorage.setItem('token', response.token)
+          router.push('/')
+        })
+      }
+    }
+
+    return {
+      errors,
+      email,
+      password,
+      submitForm,
+    }
+  },
+}
+</script>

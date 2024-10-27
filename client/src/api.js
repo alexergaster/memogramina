@@ -1,16 +1,66 @@
-export const getPosts = async () =>
-  await fetch('http://127.0.0.1:8000/api/posts', {
+const API_URL = 'http://127.0.0.1:8000/api'
+
+export const getPosts = async () => {
+  return await fetch(`${API_URL}/posts`, {
     method: 'GET',
   }).then(r => r.json())
+}
 
 export const registrationUser = async data => {
-  const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
+  return await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
-  })
+  }).then(r => r.json())
+}
+export const loginUser = async data => {
+  return await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  }).then(r => r.json())
+}
 
-  return response.json()
+export const getUser = async token => {
+  return await fetch(`${API_URL}/auth/me`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        return { error: true, status: response.status }
+      }
+
+      return response.json()
+    })
+    .catch(error => {
+      console.error('Помилка запиту:', error)
+      return { error: true, status: 500 }
+    })
+}
+
+export const refreshToken = async oldToken => {
+  return await fetch(`${API_URL}/auth/refresh`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${oldToken}`,
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        return { error: true, status: response.status }
+      }
+
+      return response.json()
+    })
+    .catch(error => {
+      console.error('Помилка запиту:', error)
+      return { error: true, status: 500 }
+    })
 }

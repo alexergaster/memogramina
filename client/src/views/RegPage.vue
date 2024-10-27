@@ -145,8 +145,6 @@ export default {
         }
 
         registrationUser(registrationData).then(response => {
-          console.log(response)
-
           if (!response.success) {
             Object.entries(response.errors).forEach(([key, value]) => {
               errors.value[key] = value[0]

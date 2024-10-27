@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getPosts } from '../api.js'
+import { getPosts, getUser, refreshToken } from '../api.js'
 
 import PostItem from '../components/PostItem.vue'
 import PersonalOfficeItem from '../components/PersonalOfficeItem.vue'
@@ -59,8 +59,17 @@ onMounted(() => {
       console.error('Error fetching post data:', error)
     })
 
-  localStorage.getItem('token')
-    ? (isUserLoggedIn.value = true)
-    : (isUserLoggedIn.value = false)
+  getUser(localStorage.getItem('token')).then(response => {
+    if (response.status === 401) {
+      refreshToken(localStorage.getItem('token')).then(r => {
+        console.log(r)
+
+        if (r.error) {
+          isUserLoggedIn.value = false
+          return
+        }
+      })
+    }
+  })
 })
 </script>
