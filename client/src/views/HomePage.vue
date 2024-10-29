@@ -1,17 +1,6 @@
 <template>
   <div class="bg-gray-100">
-    <nav class="bg-white border-b fixed top-0 w-full z-10">
-      <div class="container mx-auto flex justify-between items-center py-2">
-        <div class="text-2xl font-bold">MemoGrammina</div>
-        <div class="flex space-x-4">
-          <a href="#" class="text-gray-600 hover:text-black">Home</a>
-          <a href="#" class="text-gray-600 hover:text-black">Profile</a>
-          <a href="#" class="text-gray-600 hover:text-black">Messages</a>
-          <a href="#" class="text-gray-600 hover:text-black">Account</a>
-        </div>
-      </div>
-    </nav>
-
+    <nav-item @userLogout="userLogout" :user="user" />
     <!-- Основний контент -->
     <div class="container mx-auto mt-16 flex justify-between pb-4">
       <!-- Сторінка постів -->
@@ -27,6 +16,7 @@
         </template>
         <div v-else><h2>No memes 😥</h2></div>
       </div>
+      <!-- TODO: реактивне оновлення стану при виході користувача з кабінету! -->
       <!-- Бічна панель -->
       <div class="w-1/3 ml-3">
         <!-- Особистий кабінет -->
@@ -46,9 +36,51 @@ import { getPosts, getUser, refreshToken } from '../api.js'
 import PostItem from '../components/PostItem.vue'
 import PersonalOfficeItem from '../components/PersonalOfficeItem.vue'
 import MessengerItem from '../components/MessengerItem.vue'
+import NavItem from '../components/NavItem.vue'
 
+const UNAUTHORIZED_STATUS = 401
 const posts = ref([])
 const user = ref({})
+
+const userLogout = data => {
+  user.value.isLoggedIn = data
+}
+
+const fetchUserWithAuth = async () => {
+  const token = localStorage.getItem('token')
+
+  if (!token) {
+    user.value.isLoggedIn = false
+    return
+  }
+
+  let response = await getUser(token)
+
+  if (response.status === UNAUTHORIZED_STATUS) {
+    const newToken = await refreshAuthToken(token)
+
+    if (newToken) {
+      response = await getUser(newToken)
+    } else {
+      user.value.isLoggedIn = false
+      return
+    }
+  }
+
+  user.value = response.user
+  user.value.isLoggedIn = true
+}
+async function refreshAuthToken(token) {
+  const response = await refreshToken(token)
+
+  if (response.error) {
+    return null
+  }
+
+  localStorage.setItem('token', response.token)
+
+  return response.token
+}
 
 onMounted(() => {
   getPosts()
@@ -59,23 +91,6 @@ onMounted(() => {
       console.error('Error fetching post data:', error)
     })
 
-  getUser(localStorage.getItem('token')).then(response => {
-    if (response.status === 401) {
-      refreshToken(localStorage.getItem('token')).then(r => {
-        if (r.error) {
-          user.value.isLoggedIn = false
-        } else {
-          localStorage.setItem('token', r.token)
-          getUser(r.token).then(newResponse => {
-            user.value = newResponse.user
-            user.value.isLoggedIn = true
-          })
-        }
-      })
-    } else {
-      user.value = response.user
-      user.value.isLoggedIn = true
-    }
-  })
+  fetchUserWithAuth()
 })
 </script>
