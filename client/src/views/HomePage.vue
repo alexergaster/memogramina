@@ -16,7 +16,6 @@
         </template>
         <div v-else><h2>No memes 😥</h2></div>
       </div>
-      <!-- TODO: реактивне оновлення стану при виході користувача з кабінету! -->
       <!-- Бічна панель -->
       <div class="w-1/3 ml-3">
         <!-- Особистий кабінет -->
@@ -31,7 +30,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getPosts, getUser, refreshToken } from '../api.js'
+import { getPosts, getUserFromToken, refreshToken } from '../api.js'
 
 import PostItem from '../components/PostItem.vue'
 import PersonalOfficeItem from '../components/PersonalOfficeItem.vue'
@@ -40,7 +39,7 @@ import NavItem from '../components/NavItem.vue'
 
 const UNAUTHORIZED_STATUS = 401
 const posts = ref([])
-const user = ref({})
+const user = ref({ id: -1 })
 
 const userLogout = data => {
   user.value.isLoggedIn = data
@@ -54,13 +53,13 @@ const fetchUserWithAuth = async () => {
     return
   }
 
-  let response = await getUser(token)
+  let response = await getUserFromToken(token)
 
   if (response.status === UNAUTHORIZED_STATUS) {
     const newToken = await refreshAuthToken(token)
 
     if (newToken) {
-      response = await getUser(newToken)
+      response = await getUserFromToken(newToken)
     } else {
       user.value.isLoggedIn = false
       return
@@ -85,12 +84,13 @@ async function refreshAuthToken(token) {
 onMounted(() => {
   getPosts()
     .then(response => {
-      posts.value = response.data
+      if (response.status) {
+        posts.value = response.data
+      }
     })
     .catch(error => {
       console.error('Error fetching post data:', error)
     })
-
   fetchUserWithAuth()
 })
 </script>

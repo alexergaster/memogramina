@@ -38,7 +38,7 @@ export const loginUser = async data => {
   })
 }
 
-export const getUser = async token => {
+export const getUserFromToken = async token => {
   return await handleFetch(`${API_URL}/auth/me`, {
     method: 'GET',
     headers: {
@@ -62,5 +62,11 @@ export const logout = async token => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  })
+}
+
+export const getUser = async userId => {
+  return await handleFetch(`${API_URL}/user/${userId}`, {
+    method: 'GET',
   })
 }

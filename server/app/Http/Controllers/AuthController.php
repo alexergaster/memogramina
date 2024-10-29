@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\User\RegisterRequset;
 use App\Http\Resources\User\UserResource;
-use App\Services\User\Service;
+use App\Services\Auth\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;

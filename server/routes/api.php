@@ -2,11 +2,20 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtAuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/posts', [PostController::class, 'index']);
-Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::prefix('/posts')->group(function () {
+  Route::get('', [PostController::class, 'index']);
+  Route::get('/{id}', [PostController::class, 'show']);
+});
+
+Route::prefix('/user')->group(function () {
+  Route::get('/{id}', [UserController::class, 'show']);
+});
+// ->middleware(JwtAuthMiddleware::class)
+
 
 Route::prefix('/auth')->group(function () {
   Route::post('/register', [AuthController::class, 'register']);
