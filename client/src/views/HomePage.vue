@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100">
-    <nav-item @userLogout="userLogout" :user="user" />
+    <nav-item :user="user" />
     <!-- Основний контент -->
     <div class="container mx-auto mt-16 flex justify-between pb-4">
       <!-- Сторінка постів -->
@@ -40,10 +40,6 @@ import NavItem from '../components/NavItem.vue'
 const posts = ref([])
 const user = ref({ id: -1 })
 
-const userLogout = data => {
-  user.value.isLoggedIn = data
-}
-
 onMounted(() => {
   getPosts().then(response => {
     if (response.data.status) {
@@ -54,7 +50,6 @@ onMounted(() => {
   getUserData().then(r => {
     if (r.success) {
       user.value = r.user
-      user.value.isLoggedIn = true
     }
   })
 })

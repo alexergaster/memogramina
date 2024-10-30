@@ -31,7 +31,7 @@
         >
         <button
           class="focus:outline-none"
-          v-if="user.isLoggedIn"
+          v-if="isAuthenticated"
           @click="logoutUser"
         >
           <img
@@ -46,16 +46,13 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue'
 import { logout } from '../api'
+import { ref } from 'vue'
+import { useStore } from 'vuex'
 
-const emit = defineEmits({
-  userLogout: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
-})
+const store = useStore()
+const isAuthenticated = ref(store.state.isAuthenticated)
+
 defineProps({
   user: {
     type: Object,
@@ -67,7 +64,6 @@ const logoutUser = () => {
   logout(localStorage.getItem('token')).then(response => {
     if (response.data.success) {
       localStorage.removeItem('token')
-      emit('userLogout', false)
     }
   })
 }

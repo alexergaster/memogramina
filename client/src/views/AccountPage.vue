@@ -13,7 +13,7 @@
           <div>
             <h1 class="text-2xl font-bold">{{ user.name }}</h1>
             <p class="text-gray-600">{{ user.username }}</p>
-            <div class="flex space-x-4 mt-2">
+            <div class="flex space-x-4 mt-2 items-center">
               <div class="space-x-2">
                 <span class="font-semibold">{{ user.posts.length }}</span>
                 <span>постів</span>
@@ -26,12 +26,19 @@
                 <span class="font-semibold">{{ user.following.length }}</span>
                 <span>підписок</span>
               </div>
+              <div class="space-x-2">
+                <button
+                  v-if="editingRights"
+                  @click="addPost"
+                  class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Додати пост
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <button v-if="editingRights">TEST</button>
 
       <div v-if="user.posts.length" class="mt-8 grid grid-cols-3 gap-4">
         <div
@@ -75,9 +82,6 @@ onMounted(() => {
   getUser(userId).then(response => {
     if (response.data.success) {
       user.value = response.data.data
-      user.value.isLoggedIn = token ? true : false
-    } else {
-      // TODO
     }
   })
 })

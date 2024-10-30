@@ -14,9 +14,9 @@
     >
       My Account
     </router-link>
-
+    {{}}
     <div
-      v-if="!user.isLoggedIn"
+      v-if="!isAuthenticated"
       class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 backdrop-blur-sm rounded-lg"
     >
       <p class="text-black text-lg font-semibold text-center cursor-default">
@@ -29,6 +29,12 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const isAuthenticated = ref(store.state.isAuthenticated)
+
 defineProps({
   user: {
     type: Object,
