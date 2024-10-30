@@ -11,17 +11,23 @@
           Home
         </router-link>
         <router-link
-          :to="{ name: 'profile', params: { id: user.id } }"
+          :to="{ name: 'account', params: { id: user.id } }"
           active-class="text-black font-bold"
           class="text-gray-600 hover:text-black"
         >
-          Profile
+          Account
         </router-link>
         <a
           href="#"
           active-class="text-black font-bold"
           class="text-gray-600 hover:text-black"
           >Messages</a
+        >
+        <a
+          href="#"
+          active-class="text-black font-bold"
+          class="text-gray-600 hover:text-black"
+          >Profile</a
         >
         <button
           class="focus:outline-none"

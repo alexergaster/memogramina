@@ -8,9 +8,12 @@
         <p class="text-gray-500">{{ user.username }}</p>
       </div>
     </div>
-    <button class="mt-4 w-full bg-blue-500 text-white py-2 rounded">
-      My Profile
-    </button>
+    <router-link
+      :to="{ name: 'account', params: { id: user.id } }"
+      class="mt-4 block w-full bg-blue-500 text-white py-2 rounded text-center"
+    >
+      My Account
+    </router-link>
 
     <div
       v-if="!user.isLoggedIn"

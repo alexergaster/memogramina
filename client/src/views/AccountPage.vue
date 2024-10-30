@@ -13,11 +13,19 @@
           <div>
             <h1 class="text-2xl font-bold">{{ user.name }}</h1>
             <p class="text-gray-600">{{ user.username }}</p>
-            <div class="flex space-x-6 mt-2">
-              <span class="font-semibold">{{ user.posts.length }}</span>
-              <span>постів</span> <span class="font-semibold">500</span>
-              <span>підписників</span> <span class="font-semibold">300</span>
-              <span>підписок</span>
+            <div class="flex space-x-4 mt-2">
+              <div class="space-x-2">
+                <span class="font-semibold">{{ user.posts.length }}</span>
+                <span>постів</span>
+              </div>
+              <div class="space-x-2">
+                <span class="font-semibold">{{ user.followers.length }}</span>
+                <span>підписників</span>
+              </div>
+              <div class="space-x-2">
+                <span class="font-semibold">{{ user.following.length }}</span>
+                <span>підписок</span>
+              </div>
             </div>
           </div>
         </div>
