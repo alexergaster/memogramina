@@ -39,40 +39,29 @@ api.interceptors.request.use(config => {
   return config
 })
 
-api.interceptors.response.use(
-  config => {
+api.interceptors.response.use({}, async error => {
+  if (error.response.data.error === 'Token expired') {
     const token = localStorage.getItem('token')
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-
-    return config
-  },
-  async error => {
-    if (error.response.data.error === 'Token expired') {
-      const token = localStorage.getItem('token')
-
-      return axios
-        .post(
-          `${API_URL}/auth/refresh`,
-          {},
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
+    return axios
+      .post(
+        `${API_URL}/auth/refresh`,
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
           },
-        )
-        .then(r => {
-          const newToken = localStorage.setItem('token', r.data.token)
+        },
+      )
+      .then(r => {
+        const newToken = localStorage.setItem('token', r.data.token)
 
-          error.config.headers.Authorization = `Bearer ${newToken}`
+        error.config.headers.Authorization = `Bearer ${newToken}`
 
-          return api.request(error.config)
-        })
-    }
-  },
-)
+        return api.request(error.config)
+      })
+  }
+})
 
 export const logout = async token => {
   return await api.post(

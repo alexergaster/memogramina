@@ -64,6 +64,7 @@ const logoutUser = () => {
   logout(localStorage.getItem('token')).then(response => {
     if (response.data.success) {
       localStorage.removeItem('token')
+      isAuthenticated.value = false
     }
   })
 }
