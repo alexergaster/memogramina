@@ -30,14 +30,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getPosts, getUserFromToken, refreshToken } from '../api.js'
+import { getPosts, getUserData } from '../api.js'
 
 import PostItem from '../components/PostItem.vue'
 import PersonalOfficeItem from '../components/PersonalOfficeItem.vue'
 import MessengerItem from '../components/MessengerItem.vue'
 import NavItem from '../components/NavItem.vue'
 
-const UNAUTHORIZED_STATUS = 401
 const posts = ref([])
 const user = ref({ id: -1 })
 
@@ -45,52 +44,18 @@ const userLogout = data => {
   user.value.isLoggedIn = data
 }
 
-const fetchUserWithAuth = async () => {
-  const token = localStorage.getItem('token')
-
-  if (!token) {
-    user.value.isLoggedIn = false
-    return
-  }
-
-  let response = await getUserFromToken(token)
-
-  if (response.status === UNAUTHORIZED_STATUS) {
-    const newToken = await refreshAuthToken(token)
-
-    if (newToken) {
-      response = await getUserFromToken(newToken)
-    } else {
-      user.value.isLoggedIn = false
-      return
-    }
-  }
-
-  user.value = response.user
-  user.value.isLoggedIn = true
-}
-async function refreshAuthToken(token) {
-  const response = await refreshToken(token)
-
-  if (response.error) {
-    return null
-  }
-
-  localStorage.setItem('token', response.token)
-
-  return response.token
-}
-
 onMounted(() => {
-  getPosts()
-    .then(response => {
-      if (response.status) {
-        posts.value = response.data
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching post data:', error)
-    })
-  fetchUserWithAuth()
+  getPosts().then(response => {
+    if (response.data.status) {
+      posts.value = response.data.data
+    }
+  })
+
+  getUserData().then(r => {
+    if (r.success) {
+      user.value = r.user
+      user.value.isLoggedIn = true
+    }
+  })
 })
 </script>

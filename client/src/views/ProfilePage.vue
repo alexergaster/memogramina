@@ -41,6 +41,7 @@
           </p>
         </div>
       </div>
+      <div v-else><h2>No posts 😥</h2></div>
     </div>
   </div>
 </template>
@@ -64,8 +65,8 @@ onMounted(() => {
   const userId = route.params.id
 
   getUser(userId).then(response => {
-    if (response.success) {
-      user.value = response.data
+    if (response.data.success) {
+      user.value = response.data.data
       user.value.isLoggedIn = token ? true : false
     } else {
       // TODO

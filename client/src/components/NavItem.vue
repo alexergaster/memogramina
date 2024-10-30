@@ -59,7 +59,7 @@ defineProps({
 
 const logoutUser = () => {
   logout(localStorage.getItem('token')).then(response => {
-    if (response.success) {
+    if (response.data.success) {
       localStorage.removeItem('token')
       emit('userLogout', false)
     }

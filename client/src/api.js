@@ -1,72 +1,91 @@
+import axios from 'axios'
+
 const API_URL = 'http://127.0.0.1:8000/api'
 
-const handleFetch = async (url, options) => {
-  try {
-    const response = await fetch(url, options)
-    if (!response.ok) {
-      return { error: true, status: response.status }
-    }
-    return await response.json()
-  } catch (error) {
-    console.error('Помилка запиту:', error)
-    return { error: true, status: 500 }
-  }
-}
+const api = axios.create({
+  baseURL: API_URL,
+})
 
 export const getPosts = async () => {
-  return await handleFetch(`${API_URL}/posts`, {
-    method: 'GET',
-  })
+  return await api.get('/posts')
 }
 
 export const registrationUser = async data => {
-  return await handleFetch(`${API_URL}/auth/register`, {
-    method: 'POST',
+  return await api.post('/auth/register', data, {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
   })
 }
 export const loginUser = async data => {
-  return await handleFetch(`${API_URL}/auth/login`, {
-    method: 'POST',
+  return await api.post(`/auth/login`, data, {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
   })
 }
 
-export const getUserFromToken = async token => {
-  return await handleFetch(`${API_URL}/auth/me`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+export const getUserData = async () => {
+  return await api.get(`/auth/me`).then(r => r.data)
 }
 
-export const refreshToken = async oldToken => {
-  return await handleFetch(`${API_URL}/auth/refresh`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${oldToken}`,
-    },
-  })
-}
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  return config
+})
+
+api.interceptors.response.use(
+  config => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+
+    return config
+  },
+  async error => {
+    if (error.response.data.error === 'Token expired') {
+      const token = localStorage.getItem('token')
+
+      return axios
+        .post(
+          `${API_URL}/auth/refresh`,
+          {},
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        .then(r => {
+          const newToken = localStorage.setItem('token', r.data.token)
+
+          error.config.headers.Authorization = `Bearer ${newToken}`
+
+          return api.request(error.config)
+        })
+    }
+  },
+)
 
 export const logout = async token => {
-  return await handleFetch(`${API_URL}/auth/logout`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
+  return await api.post(
+    `/auth/logout`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 }
 
 export const getUser = async userId => {
-  return await handleFetch(`${API_URL}/user/${userId}`, {
-    method: 'GET',
-  })
+  return await api.get(`/user/${userId}`)
 }

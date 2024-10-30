@@ -100,14 +100,14 @@ export default {
         }
 
         loginUser(userData).then(response => {
-          if (!response.success) {
-            Object.entries(response.errors).forEach(([key, value]) => {
+          if (!response.data.success) {
+            Object.entries(response.data.errors).forEach(([key, value]) => {
               errors.value[key] = value[0]
             })
             return
           }
 
-          localStorage.setItem('token', response.token)
+          localStorage.setItem('token', response.data.token)
           router.push('/')
         })
       }
