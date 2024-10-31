@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/posts')->group(function () {
   Route::get('', [PostController::class, 'index']);
-  Route::get('/{id}', [PostController::class, 'show']);
+  // Route::get('/{id}', [PostController::class, 'show']);
+
+  Route::middleware(JwtAuthMiddleware::class)->group(function () {
+    Route::post('', [PostController::class, 'store']);
+  });
 });
 
 Route::prefix('/user')->group(function () {
