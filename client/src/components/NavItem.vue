@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white border-b fixed top-0 w-full z-10">
+  <nav class="bg-white fixed top-0 w-full z-10">
     <div class="container mx-auto flex justify-between items-center py-2">
       <router-link to="/" class="text-2xl font-bold">MemoGrammina</router-link>
       <div class="flex space-x-4">

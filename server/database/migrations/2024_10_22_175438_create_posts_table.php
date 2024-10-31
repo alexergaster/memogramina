@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('image', 100);
             $table->text('caption');
             $table->integer('likes')->default(0);
+            $table->timestamps();
 
             $table->unsignedBigInteger('user_id');
         });

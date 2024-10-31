@@ -17,7 +17,9 @@ class UserController extends Controller
 
     public function show($id): JsonResponse
     {
-        $user = User::with(['posts', 'following', 'followers'])->findOrFail($id);
+        $user = User::with(['posts' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'following', 'followers'])->findOrFail($id);
 
         return response()->json(["success" => true, "data" => $user]);
     }

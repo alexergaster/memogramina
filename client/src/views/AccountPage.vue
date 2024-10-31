@@ -29,7 +29,7 @@
               <div class="space-x-2">
                 <button
                   v-if="editingRights"
-                  @click="addPost"
+                  @click="openModal"
                   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                   Додати пост
@@ -58,6 +58,50 @@
       </div>
       <div v-else><h2>No posts 😥</h2></div>
     </div>
+    <modal-item :isOpen="isModalOpen" :onClose="closeModal">
+      <h1 class="text-center font-bold text-2xl">Add a new Post</h1>
+      <form @submit.prevent="handleSubmit" method="POST" class="mt-4 space-y-4">
+        <div>
+          <label for="image" class="block text-sm font-medium text-gray-600"
+            >Image</label
+          >
+          <input
+            @change="handleFileChange"
+            type="file"
+            name="image"
+            required
+            class="w-full mt-1 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p v-if="errors.image" class="text-red-500 text-sm">
+            {{ errors.image }}
+          </p>
+        </div>
+
+        <div>
+          <label for="caption" class="block text-sm font-medium text-gray-600"
+            >Caption</label
+          >
+          <textarea
+            type="caption"
+            name="caption"
+            v-model="caption"
+            rows="5"
+            required
+            class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p v-if="errors.caption" class="text-red-500 text-sm">
+            {{ errors.caption }}
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 transition duration-300"
+        >
+          Додати
+        </button>
+      </form>
+    </modal-item>
   </div>
 </template>
 
@@ -65,16 +109,49 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
-import { getUser } from '../api'
+import { getUser, addPost } from '../api'
 import NavItem from '../components/NavItem.vue'
+import ModalItem from '../components/ModalItem.vue'
 
 const user = ref({})
 const route = useRoute()
 const token = localStorage.getItem('token')
+const caption = ref('')
+const image = ref(null)
+const errors = ref({})
 
 const editingRights = computed(() => {
   return user.value.id ? user.value.id == jwtDecode(token).sub : false
 })
+
+const isModalOpen = ref(false)
+
+function openModal() {
+  isModalOpen.value = true
+}
+
+function closeModal() {
+  isModalOpen.value = false
+}
+
+const handleFileChange = event => {
+  image.value = event.target.files[0]
+}
+
+const handleSubmit = () => {
+  const formData = new FormData()
+  formData.append('image', image.value)
+  formData.append('caption', caption.value)
+  formData.append('user_id', route.params.id)
+
+  addPost(formData).then(r => {
+    if (r.data.success) {
+      closeModal()
+
+      user.value.posts.unshift(r.data.post)
+    }
+  })
+}
 
 onMounted(() => {
   const userId = route.params.id

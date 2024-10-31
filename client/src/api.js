@@ -5,30 +5,6 @@ const API_URL = 'http://127.0.0.1:8000/api'
 const api = axios.create({
   baseURL: API_URL,
 })
-
-export const getPosts = async () => {
-  return await api.get('/posts')
-}
-
-export const registrationUser = async data => {
-  return await api.post('/auth/register', data, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-}
-export const loginUser = async data => {
-  return await api.post(`/auth/login`, data, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-}
-
-export const getUserData = async () => {
-  return await api.get(`/auth/me`).then(r => r.data)
-}
-
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
 
@@ -63,18 +39,29 @@ api.interceptors.response.use({}, async error => {
   }
 })
 
-export const logout = async token => {
-  return await api.post(
-    `/auth/logout`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  )
+export const getPosts = async () => {
+  return await api.get('/posts')
+}
+
+export const registrationUser = async data => {
+  return await api.post('/auth/register', data)
+}
+export const loginUser = async data => {
+  return await api.post(`/auth/login`, data)
+}
+
+export const getUserData = async () => {
+  return await api.get(`/auth/me`).then(r => r.data)
+}
+
+export const logout = async () => {
+  return await api.post(`/auth/logout`)
 }
 
 export const getUser = async userId => {
   return await api.get(`/user/${userId}`)
+}
+
+export const addPost = async data => {
+  return await api.post(`posts`, data)
 }

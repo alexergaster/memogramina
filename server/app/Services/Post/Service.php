@@ -12,6 +12,8 @@ class Service
   {
     $image = $request->file('image');
 
+    // TODO: resize image
+
     $path = $image->store('images', 'public');
 
     $data['image'] = env('APP_URL') . ':' . env('APP_PORT') . Storage::url($path);
