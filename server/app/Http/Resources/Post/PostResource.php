@@ -18,9 +18,10 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image_path' => $this->image_path,
+            'image' => $this->image,
             'caption' => $this->caption,
-            'likes' => $this->likes,
+            "created_at" => $this->created_at,
+            'likes' => UserResource::collection($this->whenLoaded('likedByUsers')),
             'user' => new UserResource($this->whenLoaded("user")),
             'comments' => CommentResource::collection($this->whenLoaded('comments'))
         ];

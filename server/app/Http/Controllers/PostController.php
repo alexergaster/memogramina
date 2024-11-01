@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
+use App\Models\User;
 use App\Services\Post\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -20,7 +21,7 @@ class PostController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $posts = Post::with(['user', 'comments.user'])->get();
+        $posts = Post::with(['user', 'likedByUsers', 'comments.user'])->get();
 
         return PostResource::collection($posts)->additional(['status' => 'success']);
     }
@@ -33,10 +34,10 @@ class PostController extends Controller
 
         return response()->json(['success' => true, 'post' => $post]);
     }
-    // public function show($id)
-    // {
-    //     $post = Post::findOrFail($id);
-
-    //     dd($post->comments);
-    // }
+    public function show($id)
+    {
+        $post = Post::with('likedByUsers')->get();
+        // $user = User::with('likedPosts')->get();
+        return $post;
+    }
 }

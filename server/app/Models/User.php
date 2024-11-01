@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject, AuthenticatableContrac
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot'
     ];
 
     public function posts(): HasMany
@@ -51,5 +52,10 @@ class User extends Authenticatable implements JWTSubject, AuthenticatableContrac
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_followers', 'user_id', 'follower_id');
+    }
+
+    public function likedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id');
     }
 }

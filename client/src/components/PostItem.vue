@@ -10,7 +10,7 @@
     </div>
     <!-- Зображення посту -->
     <img
-      :src="post.image_path"
+      :src="post.image"
       alt="post image"
       class="w-full h-auto object-cover mb-4"
     />
@@ -21,7 +21,7 @@
         <button class="focus:outline-none">💬 Comment</button>
         <!-- <button class="focus:outline-none">🔁 Share</button> -->
       </div>
-      <p class="text-gray-500">{{ post.likes }}</p>
+      <p class="text-gray-500">{{ post.likes.length }}</p>
     </div>
     <p class="mt-4">
       <strong>{{ post.user.username }}</strong> {{ post.caption }}

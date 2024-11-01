@@ -22,7 +22,6 @@ class PostFactory extends Factory
         return [
             'image' => fake()->imageUrl(),
             "caption" => fake()->text(),
-            "likes" => fake()->numerify(),
             'user_id' => User::inRandomOrder()->first()->id
         ];
     }

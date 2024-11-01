@@ -13,6 +13,8 @@ class Post extends Model
 
     protected $table = 'posts';
     protected $guarded = false;
+    protected $hidden = ['pivot'];
+
 
     public function user(): BelongsTo
     {
@@ -22,5 +24,10 @@ class Post extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function likedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'likes', 'post_id', 'user_id');
     }
 }
