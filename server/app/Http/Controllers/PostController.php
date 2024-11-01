@@ -34,10 +34,18 @@ class PostController extends Controller
 
         return response()->json(['success' => true, 'post' => $post]);
     }
-    public function show($id)
+
+    public function toggleLike(Post $post)
     {
-        $post = Post::with('likedByUsers')->get();
-        // $user = User::with('likedPosts')->get();
-        return $post;
+        $data = $this->service->toggleLike($post);
+
+        return response()->json(['success' => true, 'data' => $data]);
     }
+
+    // public function show($id)
+    // {
+    //     $post = Post::with('likedByUsers')->get();
+    //     // $user = User::with('likedPosts')->get();
+    //     return $post;
+    // }
 }

@@ -17,11 +17,15 @@
     <!-- Взаємодії -->
     <div class="flex justify-between">
       <div class="flex space-x-4">
-        <button class="focus:outline-none">❤️ Like</button>
+        <button class="focus:outline-none" @click="handlerLike(post.id)">
+          <p v-if="idLikePost">❤️</p>
+          <p v-else>🖤</p>
+          Like
+        </button>
         <button class="focus:outline-none">💬 Comment</button>
         <!-- <button class="focus:outline-none">🔁 Share</button> -->
       </div>
-      <p class="text-gray-500">{{ post.likes.length }}</p>
+      <p class="text-gray-500">{{ localPost.likes.length }}</p>
     </div>
     <p class="mt-4">
       <strong>{{ post.user.username }}</strong> {{ post.caption }}
@@ -30,10 +34,33 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, computed } from 'vue'
+import { toggleLike } from '../api'
+import { jwtDecode } from 'jwt-decode'
+
+const props = defineProps({
   post: {
     type: Object,
     required: true,
   },
 })
+
+const userId = ref(jwtDecode(localStorage.getItem('token')).sub)
+const localPost = ref({ ...props.post })
+
+const idLikePost = computed(() => {
+  return localPost.value.likes.some(item => item['id'] == userId.value)
+})
+
+const handlerLike = id => {
+  toggleLike(id).then(r => {
+    if (r.data.success) {
+      r.data.data.message === 'Liked'
+        ? localPost.value.likes.push(r.data.data.user)
+        : (localPost.value.likes = localPost.value.likes.filter(
+            item => item.id !== r.data.data.user.id,
+          ))
+    }
+  })
+}
 </script>
