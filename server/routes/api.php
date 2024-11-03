@@ -14,6 +14,7 @@ Route::prefix('/posts')->group(function () {
     Route::post('', [PostController::class, 'store']);
     Route::post('/{post}/like', [PostController::class, 'toggleLike']);
     Route::post('/{post}/comment', [PostController::class, 'addComment']);
+    Route::delete('/{post}/comment/{comment}', [PostController::class, 'removeComment']);
   });
 });
 

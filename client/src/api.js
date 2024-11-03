@@ -42,33 +42,30 @@ api.interceptors.response.use({}, async error => {
 export const getPosts = async () => {
   return await api.get('/posts')
 }
-
 export const registrationUser = async data => {
   return await api.post('/auth/register', data)
 }
 export const loginUser = async data => {
   return await api.post(`/auth/login`, data)
 }
-
 export const getUserData = async () => {
   return await api.get(`/auth/me`).then(r => r.data)
 }
-
 export const logout = async () => {
   return await api.post(`/auth/logout`)
 }
-
 export const getUser = async userId => {
   return await api.get(`/user/${userId}`)
 }
-
 export const addPost = async data => {
   return await api.post(`posts`, data)
 }
-
 export const toggleLike = async postId => {
   return await api.post(`posts/${postId}/like`)
 }
 export const addComment = async (postId, data) => {
   return await api.post(`posts/${postId}/comment`, data)
+}
+export const removeComment = async (postId, commentId) => {
+  return await api.delete(`posts/${postId}/comment/${commentId}`)
 }

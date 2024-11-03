@@ -57,19 +57,32 @@
           </button>
         </div>
       </div>
-      <div class="my-6" v-for="(comment, idx) in post.comments" :key="idx">
-        <div class="flex items-center mb-2">
-          <img
-            :src="post.user.image"
-            alt="avatar"
-            class="rounded-full h-10 w-10 mr-1"
-          />
-          <strong>{{ comment.user.username }}</strong>
+      <div
+        class="my-6 flex items-center border-b-2 pb-2"
+        v-for="(comment, idx) in localPost.comments"
+        :key="idx"
+      >
+        <div>
+          <div class="flex items-center mb-2">
+            <img
+              :src="post.user.image"
+              alt="avatar"
+              class="rounded-full h-10 w-10 mr-1"
+            />
+            <strong>{{ comment.user.username }}</strong>
+          </div>
+          {{ comment.content }}
         </div>
-        {{ comment.content }}
+        <div
+          class="ml-auto cursor-pointer"
+          v-if="editingRights(comment.user.id)"
+          @click="handlerRemoveComment(post.id, comment.id)"
+        >
+          🗑️
+        </div>
       </div>
 
-      <form @submit.prevent="handlerComment(post.id)" class="mt-4 space-y-4">
+      <form @submit.prevent="handlerAddComment(post.id)" class="mt-4 space-y-4">
         <div>
           <label for="caption" class="block text-sm font-medium text-gray-600"
             >Caption</label
@@ -81,9 +94,6 @@
             required
             class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <p v-if="errors.content" class="text-red-500 text-sm">
-            {{ errors.content }}
-          </p>
         </div>
         <button
           type="submit"
@@ -98,12 +108,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { toggleLike, addComment } from '../api'
+import { toggleLike, addComment, removeComment } from '../api'
 import { jwtDecode } from 'jwt-decode'
 import ModalItem from '../components/ModalItem.vue'
 
 const isModalOpen = ref(false)
-const errors = ref({})
 const content = ref('')
 
 const props = defineProps({
@@ -128,7 +137,21 @@ const idLikePost = computed(() => {
   return localPost.value.likes.some(item => item['id'] == userId.value)
 })
 
-const handlerComment = id => {
+const editingRights = authorId => {
+  return authorId === +userId.value
+}
+
+const handlerRemoveComment = (id, commentId) => {
+  removeComment(id, commentId).then(r => {
+    if (r.data.success) {
+      localPost.value.comments = localPost.value.comments.filter(
+        item => item.id !== r.data.comment.id,
+      )
+    }
+  })
+}
+
+const handlerAddComment = id => {
   if (content.value.length) {
     addComment(id, { content: content.value }).then(r => {
       if (r.data.success) {

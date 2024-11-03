@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\CommentRequest;
 use App\Http\Requests\Post\StoreRequest;
-use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\Post\PostResource;
+use App\Models\Comment;
 use App\Models\Post;
-use App\Models\User;
 use App\Services\Post\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -37,7 +36,7 @@ class PostController extends Controller
         return response()->json(['success' => true, 'post' => $post]);
     }
 
-    public function toggleLike(Post $post)
+    public function toggleLike(Post $post): JsonResponse
     {
         $data = $this->service->toggleLike($post);
 
@@ -45,13 +44,23 @@ class PostController extends Controller
     }
 
 
-    public function addComment(CommentRequest $request, Post $post)
+    public function addComment(CommentRequest $request, Post $post): JsonResponse
     {
         $data = $request->validated();
 
         $response = $this->service->addComment($data, $post);
 
         return response()->json(['success' => true, 'data' => $response]);
+    }
+
+    public function removeComment(Post $post, Comment $comment): JsonResponse
+    {
+        if ($post->comments()->where('id', $comment->id)->exists()) {
+            $comment->delete();
+            return response()->json(['success' => true, "comment" => $comment]);
+        }
+
+        return response()->json(['success' => false]);
     }
 
     // public function show($id)
