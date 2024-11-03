@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\CommentRequest;
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\Post\PostResource;
 use App\Models\Post;
 use App\Models\User;
@@ -40,6 +42,16 @@ class PostController extends Controller
         $data = $this->service->toggleLike($post);
 
         return response()->json(['success' => true, 'data' => $data]);
+    }
+
+
+    public function addComment(CommentRequest $request, Post $post)
+    {
+        $data = $request->validated();
+
+        $response = $this->service->addComment($data, $post);
+
+        return response()->json(['success' => true, 'data' => $response]);
     }
 
     // public function show($id)

@@ -69,3 +69,6 @@ export const addPost = async data => {
 export const toggleLike = async postId => {
   return await api.post(`posts/${postId}/like`)
 }
+export const addComment = async (postId, data) => {
+  return await api.post(`posts/${postId}/comment`, data)
+}

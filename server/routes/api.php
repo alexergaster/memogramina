@@ -13,6 +13,7 @@ Route::prefix('/posts')->group(function () {
   Route::middleware(JwtAuthMiddleware::class)->group(function () {
     Route::post('', [PostController::class, 'store']);
     Route::post('/{post}/like', [PostController::class, 'toggleLike']);
+    Route::post('/{post}/comment', [PostController::class, 'addComment']);
   });
 });
 

@@ -102,7 +102,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { toggleLike } from '../api'
+import { toggleLike, addComment } from '../api'
 import { jwtDecode } from 'jwt-decode'
 import ModalItem from '../components/ModalItem.vue'
 
@@ -133,11 +133,14 @@ const idLikePost = computed(() => {
 })
 
 const handlerComment = id => {
-  console.log(id)
-
-  // addComment(id).then(r => {
-  //   console.log(r)
-  // })
+  if (content.value.length) {
+    addComment(id, { content: content.value }).then(r => {
+      if (r.data.success) {
+        localPost.value.comments.push(r.data.data)
+        content.value = ''
+      }
+    })
+  }
 }
 
 const handlerLike = id => {
