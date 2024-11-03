@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isOpen"
-    class="fixed z-100 inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50"
     @click.self="close"
   >
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-3xl w-full relative">
@@ -11,7 +11,7 @@
       >
         ×
       </button>
-      <div class="modal-content">
+      <div class="modal-content max-h-[80vh] overflow-y-auto">
         <slot></slot>
       </div>
     </div>
@@ -19,6 +19,8 @@
 </template>
 
 <script setup>
+import { watch } from 'vue'
+
 const props = defineProps({
   isOpen: { type: Boolean, required: true },
   onClose: { type: Function, required: true },
@@ -29,4 +31,22 @@ function close() {
     props.onClose()
   }
 }
+const disableBodyScroll = () => {
+  document.body.classList.add('overflow-hidden')
+}
+
+const enableBodyScroll = () => {
+  document.body.classList.remove('overflow-hidden')
+}
+
+watch(
+  () => props.isOpen,
+  newVal => {
+    if (newVal) {
+      disableBodyScroll()
+    } else {
+      enableBodyScroll()
+    }
+  },
+)
 </script>

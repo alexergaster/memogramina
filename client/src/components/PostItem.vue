@@ -55,10 +55,6 @@
             <p v-if="idLikePost">❤️ Like</p>
             <p v-else>🖤 Like</p>
           </button>
-          <button class="focus:outline-none" @click="openModal">
-            💬 Comment
-          </button>
-          <!-- <button class="focus:outline-none">🔁 Share</button> -->
         </div>
       </div>
       <div class="my-6" v-for="(comment, idx) in post.comments" :key="idx">
