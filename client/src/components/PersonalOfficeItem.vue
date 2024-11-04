@@ -1,6 +1,6 @@
 <template>
   <!-- Основний вміст профілю -->
-  <div class="bg-white rounded-lg shadow p-4 my-4 relative">
+  <div class="bg-white rounded-lg shadow p-4 mb-4 relative">
     <div class="flex items-center">
       <img :src="user.image" alt="avatar" class="rounded-full h-16 w-16" />
       <div class="ml-4">

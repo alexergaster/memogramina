@@ -11,7 +11,7 @@
       >
         ×
       </button>
-      <div class="modal-content max-h-[80vh] overflow-y-auto">
+      <div class="modal-content max-h-[80vh] overflow-y-auto p-4">
         <slot></slot>
       </div>
     </div>

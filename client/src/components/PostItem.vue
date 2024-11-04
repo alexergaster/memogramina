@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 bg-white shadow-lg rounded-lg overflow-hidden mb-3">
     <!-- Шапка посту -->
     <div class="flex items-center mb-4">
       <img :src="post.user.image" alt="avatar" class="rounded-full h-10 w-10" />

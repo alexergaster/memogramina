@@ -1,15 +1,10 @@
 <template>
   <div class="bg-gray-100">
     <nav-item :user="user" />
-    <div class="container mx-auto mt-16 flex justify-between pb-4">
+    <div class="container mx-auto mt-16 flex justify-between p-4">
       <div class="w-2/3">
         <template v-if="posts.length">
-          <post-item
-            v-for="post in posts"
-            :key="post.id"
-            :post="post"
-            class="bg-white rounded-lg shadow my-4"
-          />
+          <post-item v-for="post in posts" :key="post.id" :post="post" />
         </template>
         <div v-else><h2>No memes 😥</h2></div>
       </div>

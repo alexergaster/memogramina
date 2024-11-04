@@ -15,7 +15,7 @@
             <p class="text-gray-600">{{ user.username }}</p>
             <div class="flex space-x-4 mt-2 items-center">
               <div class="space-x-2">
-                <span class="font-semibold">{{ user.posts.length }}</span>
+                <span class="font-semibold">{{ posts.length }}</span>
                 <span>постів</span>
               </div>
               <div class="space-x-2">
@@ -40,24 +40,13 @@
         </div>
       </div>
 
-      <div v-if="user.posts.length" class="mt-8 grid grid-cols-3 gap-4">
-        <div
-          v-for="(post, idx) in user.posts"
-          :key="idx"
-          class="bg-white shadow-lg rounded-lg overflow-hidden"
-        >
-          <img
-            :src="post.image"
-            alt="Пост 1"
-            class="w-full h-64 object-cover"
-          />
-          <p class="mt-2 text-gray-700 p-2">
-            {{ post.caption }}
-          </p>
-        </div>
+      <div v-if="posts.length" class="mt-8 grid grid-cols-3 gap-4">
+        <post-item v-for="(post, idx) in posts" :key="idx" :post="post" />
       </div>
       <div v-else><h2>No posts 😥</h2></div>
     </div>
+
+    <!-- Modal for add posts -->
     <modal-item :isOpen="isModalOpen" :onClose="closeModal">
       <h1 class="text-center font-bold text-2xl">Add a new Post</h1>
       <form @submit.prevent="handleSubmit" method="POST" class="mt-4 space-y-4">
@@ -112,8 +101,10 @@ import { jwtDecode } from 'jwt-decode'
 import { getUser, addPost } from '../api'
 import NavItem from '../components/NavItem.vue'
 import ModalItem from '../components/ModalItem.vue'
+import PostItem from '../components/PostItem.vue'
 
 const user = ref({})
+const posts = ref({})
 const route = useRoute()
 const token = localStorage.getItem('token')
 const caption = ref('')
@@ -158,7 +149,8 @@ onMounted(() => {
 
   getUser(userId).then(response => {
     if (response.data.success) {
-      user.value = response.data.data
+      user.value = response.data.data.user
+      posts.value = response.data.data.posts
     }
   })
 })
