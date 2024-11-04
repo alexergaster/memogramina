@@ -34,6 +34,26 @@
                 >
                   Додати пост
                 </button>
+                <button
+                  v-if="!editingRights"
+                  @click="handlerSubscriber(user.id)"
+                  :class="{
+                    'bg-green-500': isSubscribe,
+                    'hover:bg-green-600': isSubscribe,
+                    'bg-red-600': !isSubscribe,
+                    'hover:bg-red-600': !isSubscribe,
+                  }"
+                  class="text-white px-4 py-2 rounded"
+                >
+                  {{ isSubscribe ? 'Підписатись' : 'Відписатись' }}
+                </button>
+                <button
+                  v-if="!editingRights"
+                  @click="subscribe(user.id)"
+                  class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Відписатись
+                </button>
               </div>
             </div>
           </div>
@@ -98,7 +118,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
-import { getUser, addPost } from '../api'
+import { getUser, addPost, subscribe, unsubscribe } from '../api'
 import NavItem from '../components/NavItem.vue'
 import ModalItem from '../components/ModalItem.vue'
 import PostItem from '../components/PostItem.vue'
@@ -125,9 +145,33 @@ function closeModal() {
   isModalOpen.value = false
 }
 
+const handlerSubscriber = id => {
+  const action = isSubscribe.value ? subscribe : unsubscribe
+
+  action(id).then(r => {
+    if (!r.data.success) {
+      return
+    }
+
+    const currentUser = r.data.user
+
+    if (isSubscribe.value) {
+      user.value.followers.push(currentUser)
+    } else {
+      user.value.followers = user.value.followers.filter(
+        item => item.id !== currentUser.id,
+      )
+    }
+  })
+}
+
 const handleFileChange = event => {
   image.value = event.target.files[0]
 }
+
+const isSubscribe = computed(() => {
+  return user.value.followers.every(item => item.id !== +jwtDecode(token).sub)
+})
 
 const handleSubmit = () => {
   const formData = new FormData()

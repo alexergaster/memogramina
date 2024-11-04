@@ -20,8 +20,12 @@ Route::prefix('/posts')->group(function () {
 
 Route::prefix('/user')->group(function () {
   Route::get('/{id}', [UserController::class, 'show']);
+
+  Route::middleware(JwtAuthMiddleware::class)->group(function () {
+    Route::post('/{user}/subscribe', [UserController::class, 'subscribe']);
+    Route::post('/{user}/unsubscribe', [UserController::class, 'unsubscribe']);
+  });
 });
-// ->middleware(JwtAuthMiddleware::class)
 
 
 Route::prefix('/auth')->group(function () {

@@ -69,3 +69,10 @@ export const addComment = async (postId, data) => {
 export const removeComment = async (postId, commentId) => {
   return await api.delete(`posts/${postId}/comment/${commentId}`)
 }
+
+export const subscribe = async id => {
+  return await api.post(`user/${id}/subscribe`)
+}
+export const unsubscribe = async id => {
+  return await api.post(`user/${id}/unsubscribe`)
+}

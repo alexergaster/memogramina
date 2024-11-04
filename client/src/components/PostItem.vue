@@ -2,9 +2,19 @@
   <div class="p-4 bg-white shadow-lg rounded-lg overflow-hidden mb-3">
     <!-- Шапка посту -->
     <div class="flex items-center mb-4">
-      <img :src="post.user.image" alt="avatar" class="rounded-full h-10 w-10" />
+      <img
+        @click="goAccountUser(post.user.id)"
+        :src="post.user.image"
+        alt="avatar"
+        class="rounded-full h-10 w-10 cursor-pointer"
+      />
       <div class="ml-4">
-        <p class="font-bold">{{ post.user.username }}</p>
+        <p
+          class="font-bold cursor-pointer"
+          @click="goAccountUser(post.user.id)"
+        >
+          {{ post.user.username }}
+        </p>
         <p class="text-sm text-gray-500">2 hours ago</p>
       </div>
     </div>
@@ -111,7 +121,9 @@ import { ref, computed } from 'vue'
 import { toggleLike, addComment, removeComment } from '../api'
 import { jwtDecode } from 'jwt-decode'
 import ModalItem from '../components/ModalItem.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const isModalOpen = ref(false)
 const content = ref('')
 
@@ -121,6 +133,13 @@ const props = defineProps({
     required: true,
   },
 })
+// TODO: не подобається       👇          👇              👇
+const userId = ref(jwtDecode(localStorage.getItem('token')).sub)
+const localPost = ref({ ...props.post })
+
+const goAccountUser = id => {
+  router.push(`account/${id}`)
+}
 
 const openModal = () => {
   isModalOpen.value = true
@@ -129,9 +148,6 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false
 }
-
-const userId = ref(jwtDecode(localStorage.getItem('token')).sub)
-const localPost = ref({ ...props.post })
 
 const idLikePost = computed(() => {
   return localPost.value.likes.some(item => item['id'] == userId.value)
