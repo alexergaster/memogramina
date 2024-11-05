@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\User;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class RegisterRequset extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +25,20 @@ class RegisterRequset extends FormRequest
     public function rules(): array
     {
         return [
-            "username" => "required|string|max:100",
+            // "image" => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'name' => 'required|string|max:100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            "username" => "required|string|max:100",
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:100',
+                Rule::unique('users')->ignore(auth()->id()),
+            ],
+            'password' => 'nullable|string|min:6',
         ];
     }
+
     /**
      * Handle a failed validation attempt.
      *

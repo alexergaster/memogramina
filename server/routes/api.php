@@ -22,6 +22,8 @@ Route::prefix('/user')->group(function () {
   Route::get('/{id}', [UserController::class, 'show']);
 
   Route::middleware(JwtAuthMiddleware::class)->group(function () {
+    Route::get('', [UserController::class, 'edit']);
+    Route::post('', [UserController::class, 'update']);
     Route::post('/{user}/subscribe', [UserController::class, 'subscribe']);
     Route::post('/{user}/unsubscribe', [UserController::class, 'unsubscribe']);
   });

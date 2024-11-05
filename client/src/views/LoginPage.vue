@@ -63,57 +63,45 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
 import { loginUser } from '../api'
 import { useRouter } from 'vue-router'
 
-export default {
-  name: 'LoginPage',
-  setup() {
-    const router = useRouter()
-    const email = ref('')
-    const password = ref('')
-    const errors = ref({})
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const errors = ref({})
 
-    const validateForm = () => {
-      errors.value = {}
+const validateForm = () => {
+  errors.value = {}
 
-      if (!password.value) {
-        errors.value.password = "Пароль обов'язковий"
-      } else if (password.value.length < 6) {
-        errors.value.password = 'Пароль повинен бути не менше 6 символів'
-      }
+  if (!password.value) {
+    errors.value.password = "Пароль обов'язковий"
+  } else if (password.value.length < 6) {
+    errors.value.password = 'Пароль повинен бути не менше 6 символів'
+  }
+}
+
+const submitForm = () => {
+  validateForm()
+  if (Object.keys(errors.value).length === 0) {
+    const userData = {
+      email: email.value,
+      password: password.value,
     }
 
-    const submitForm = () => {
-      validateForm()
-      if (Object.keys(errors.value).length === 0) {
-        const userData = {
-          email: email.value,
-          password: password.value,
-        }
-
-        loginUser(userData).then(response => {
-          if (!response.data.success) {
-            Object.entries(response.data.errors).forEach(([key, value]) => {
-              errors.value[key] = value[0]
-            })
-            return
-          }
-
-          localStorage.setItem('token', response.data.token)
-          router.push('/')
+    loginUser(userData).then(response => {
+      if (!response.data.success) {
+        Object.entries(response.data.errors).forEach(([key, value]) => {
+          errors.value[key] = value[0]
         })
+        return
       }
-    }
 
-    return {
-      errors,
-      email,
-      password,
-      submitForm,
-    }
-  },
+      localStorage.setItem('token', response.data.token)
+      router.push('/')
+    })
+  }
 }
 </script>

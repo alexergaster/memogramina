@@ -2,7 +2,6 @@
 
 namespace App\Services\Post;
 
-use App\Http\Requests\Post\CommentRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Post\StoreRequest;
 use App\Http\Resources\Comment\CommentResource;

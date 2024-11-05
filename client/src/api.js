@@ -76,3 +76,11 @@ export const subscribe = async id => {
 export const unsubscribe = async id => {
   return await api.post(`user/${id}/unsubscribe`)
 }
+
+export const getUserInfoProfille = async () => {
+  return await api.get(`user`)
+}
+
+export const updateUser = async data => {
+  return await api.post(`user`, data)
+}

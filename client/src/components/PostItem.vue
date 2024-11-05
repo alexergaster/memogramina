@@ -61,7 +61,11 @@
         class="w-full h-auto object-cover mb-4"
       />
       <div class="flex justify-between">
-        <div class="flex space-x-4">
+        <div class="flex space-x-4 flex-col">
+          <div class="mb-3">
+            Опис:
+            {{ post.caption }}
+          </div>
           <button class="focus:outline-none flex" @click="handlerLike(post.id)">
             <p class="mr-1">{{ localPost.likes.length }}</p>
             <p v-if="idLikePost">❤️ Like</p>
