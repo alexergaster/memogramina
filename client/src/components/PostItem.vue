@@ -41,6 +41,8 @@
     <p class="mt-4">
       <strong>{{ post.user.username }}</strong> {{ post.caption }}
     </p>
+
+    <!-- Modal for comment -->
     <modal-item :isOpen="isModalOpen" :onClose="closeModal">
       <div class="flex items-center mb-4">
         <img
@@ -107,7 +109,13 @@
         </div>
         <button
           type="submit"
-          class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 transition duration-300"
+          :disabled="addCommentRights"
+          :class="{
+            'bg-green-600': !addCommentRights,
+            'hover:bg-green-500': !addCommentRights,
+            'bg-gray-600': addCommentRights,
+          }"
+          class="w-full text-white py-2 rounded transition duration-300"
         >
           Додати
         </button>
@@ -134,8 +142,13 @@ const props = defineProps({
   },
 })
 // TODO: не подобається       👇          👇              👇
-const userId = ref(jwtDecode(localStorage.getItem('token')).sub)
+const userId = ref(-1)
 const localPost = ref({ ...props.post })
+
+// TODO: не подобається       👇          👇              👇
+if (localStorage.getItem('token')) {
+  userId.value = jwtDecode(localStorage.getItem('token')).sub
+}
 
 const goAccountUser = id => {
   router.push(`account/${id}`)
@@ -151,6 +164,10 @@ const closeModal = () => {
 
 const idLikePost = computed(() => {
   return localPost.value.likes.some(item => item['id'] == userId.value)
+})
+
+const addCommentRights = computed(() => {
+  return userId.value < 0
 })
 
 const editingRights = authorId => {
